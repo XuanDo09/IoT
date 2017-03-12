@@ -1,7 +1,6 @@
 <?php
-
-	include("connect.php"); 	
-	
+	include ("session.php");
+		
 	$link=Connection();
 
 	$result=mysqli_query($link,"SELECT * FROM `templog` ORDER BY `timeStamp` DESC");
@@ -23,15 +22,16 @@
 		</tr>
 
       <?php 
-		  if($result!==FALSE){
-		     while($row = mysqli_fetch_array($result)) {
-		        printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
-		           $row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
-		     }
-		     mysqli_free_result($result);
-		     mysqli_close($link);
-		  }
+  			if($result!==FALSE){
+	     		while($row = mysqli_fetch_array($result)) {
+	        		printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
+	           		$row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
+	     		}
+	     	mysqli_free_result($result);
+	     	mysqli_close($link);
+	  		}  
       ?>
    </table>
+   <b id="logout"><a href="logout.php">Log Out</a></b>
 </body>
 </html>

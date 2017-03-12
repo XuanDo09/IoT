@@ -16,5 +16,5 @@
    }
    
    mysqli_close($link);
-
+   header()
 ?>

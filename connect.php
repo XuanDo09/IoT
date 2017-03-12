@@ -1,5 +1,4 @@
 <?php
-
 	function Connection(){
 		$localhost="localhost";
 		$user="root";
