@@ -11,8 +11,8 @@
       <title>Sensor Data</title>
    </head>
 <body>
+   <h2 id="logout"><a href="logout.php">Log Out</a></h2>
    <h1>Temperature / moisture sensor readings</h1>
-
    <table border="1" cellspacing="1" cellpadding="1">
 		<tr>
 			<td>&nbsp;Timestamp&nbsp;</td>
@@ -32,6 +32,5 @@
 	  		}  
       ?>
    </table>
-   <b id="logout"><a href="logout.php">Log Out</a></b>
 </body>
 </html>
