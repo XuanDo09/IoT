@@ -1,9 +1,5 @@
 <?php
 	include ("session.php");
-		
-	$link=Connection();
-
-	$result=mysqli_query($link,"SELECT * FROM `templog` ORDER BY `timeStamp` DESC");
 ?>
 
 <!DOCTYPE html>
@@ -21,10 +17,7 @@
      <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
      <!-- Font Awesome -->
      <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-     <!-- Datatables -->
-    <link href="vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
-    <link href="vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
-
+     
     <!-- Custom Theme Style -->
      <link href="build/css/custom.min.css" rel="stylesheet">
    </head>
@@ -111,32 +104,11 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>Temperature / Moisture sensor readings</h2>
+                    <h2>home page</h2>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                      <thead>
-                        <tr>
-                          <th>Timestamp</th>
-                          <th>Temperature</th>
-                          <th>Humidity</th>
-                          <th>Moisture</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      	<?php 
-  							if($result!==FALSE){
-	     						while($row = mysqli_fetch_array($result)) {
-	        						printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
-	           						$row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
-	     						}
-	     					mysqli_free_result($result);
-	     					mysqli_close($link);
-	  						}  
-      					?>
-                      </tbody>
-                    </table>
+                    
                   </div>
                 </div>
               </div>
@@ -160,18 +132,8 @@
     <!-- Bootstrap -->
      <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
    
-     <!-- Datatables -->
-    <script src="vendors/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    
     <!-- Custom Theme Scripts -->
      <script src="build/js/custom.min.js"></script> 
 
-    <!-- Datatables -->
-    <script>
-        $('#datatable-responsive').DataTable();
-    </script> 
-    <!-- /Datatables -->
   </body>
 </html>

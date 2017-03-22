@@ -13,6 +13,6 @@
     $user_session = $row['username'];
     if(!isset($email_session) && !isset($pass_session)){ 
     	mysqli_close($link);
-		header('Location: index.html'); 
+		header('Location: login.html'); 
 	}
 ?>

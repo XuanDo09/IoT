@@ -55,7 +55,7 @@
               <div class="menu_section">
                 <h3>General</h3>
                 <ul class="nav side-menu">
-                  <li><a href="index.php"><i class="fa fa-home"></i> Home </a></li>
+                  <li><a href="index.php"><i class="fa fa-home"></i> Home </a></li>               
                   <li><a href="showData.php"><i class="fa fa-table"></i>Data Table</a></li>               
                   <li><a><i class="fa fa-bar-chart-o"></i> Data Presentation <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
@@ -117,7 +117,7 @@
                         <div class="dashboard_graph x_panel">
                           <div class="row x_title">
                             <div class="col-md-6">
-                              <h3>Average Monthly Temperatures</h3>
+                              <h3>Average Monthly Humidities</h3>
                             </div>
                             <div class="col-md-6">
                               <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
