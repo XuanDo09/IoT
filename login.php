@@ -16,7 +16,7 @@
       if($count == 1) {    
          $_SESSION['email']=$myemail;
          $_SESSION['password']=$mypassword;
-         header("location: data.php");
+         header("location: showData.php");
       }else {
       	echo "<script>
 			alert('Your Login Name or Password is invalid');

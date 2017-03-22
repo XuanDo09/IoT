@@ -10,6 +10,7 @@
     $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
     $email_session = $row['email'];
     $pass_session = $row['password'];
+    $user_session = $row['username'];
     if(!isset($email_session) && !isset($pass_session)){ 
     	mysqli_close($link);
 		header('Location: index.html'); 
