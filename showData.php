@@ -50,7 +50,6 @@
               </div>
             </div>
             <!-- /menu profile quick info -->
-            <br />
 
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
@@ -129,7 +128,7 @@
 	     						while($row = mysqli_fetch_array($result)) {
 	        						printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
 	           						$row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
-	     						}
+	     					}
 	     					mysqli_free_result($result);
 	     					mysqli_close($link);
 	  						}  

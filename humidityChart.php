@@ -3,6 +3,25 @@
 		
 	$link=Connection();
 
+  $currentDate = date('Y-m-d'); 
+  $startDate = $currentDate;
+  $start = date('F d, Y');
+  $endDate = $currentDate;
+  $end = date('F d, Y');
+  if(isset($_GET["startDate"]) && isset($_GET["endDate"])){
+    $startDate = $_REQUEST["startDate"];
+    $start = date('F d, Y',strtotime($startDate));
+    $endDate = $_REQUEST["endDate"];
+    $end = date('F d, Y',strtotime($endDate));
+  }
+
+  $resultMax=mysqli_query($link,"SELECT MAX(`humidity`) AS `max` FROM `templog` 
+                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+  $resultMin=mysqli_query($link,"SELECT MIN(`humidity`) AS `min` FROM `templog` 
+                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+  $resultAVG=mysqli_query($link,"SELECT AVG(`humidity`) AS `avg` FROM `templog` 
+                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +49,7 @@
   <body class="nav-md">
     <div class="container body">
       <div class="main_container">      
-      	<div class="col-md-3 left_col menu_fixed">
+        <div class="col-md-3 left_col menu_fixed">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.php" class="site_title"><i class="fa fa-paw"></i> <span>IoT</span></a>
@@ -48,8 +67,6 @@
               </div>
             </div>
             <!-- /menu profile quick info -->
-            <br />
-
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
@@ -99,17 +116,70 @@
         <div class="right_col" role="main">
           <div class="">
             <div class="page-title">
-              <div class="title_left">
-                
+              <br/>
+              <br/>
+              <!-- top tiles -->
+              <div class="row tile_count">
+                <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+                  <div class="count_top"><i class="fa fa-line-chart blue"></i> Data</div>
+                  <div class="count blue">Today</div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+                  <span class="count_top"><i class="fa fa-arrow-up green"></i> Maximum</span>
+                  <div class="count green">
+                    <?php
+                      if($resultMax!==FALSE){
+                        $rowMax = mysqli_fetch_array($resultMax);
+                        if($rowMax['max'] == null)
+                          echo 0;
+                        else
+                          echo round($rowMax['max'],1);
+                        mysqli_free_result($resultMax);
+                      }else
+                        echo 0;
+                    ?>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+                  <span class="count_top"><i class="fa fa-arrow-down red"></i> Minimum</span>
+                  <div class="count red">
+                    <?php
+                      if($resultMin!==FALSE){
+                        $rowMin = mysqli_fetch_array($resultMin);
+                        if($rowMin['min'] == null)
+                          echo 0;
+                        else
+                          echo round($rowMin['min'],1);
+                        mysqli_free_result($resultMin);
+                      }else
+                        echo 0;
+                    ?>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
+                  <span class="count_top"><i class="fa fa-plus-square-o"></i> Average</span>
+                  <div class="count">
+                    <?php
+                      if($resultAVG!==FALSE){
+                        $rowAVG = mysqli_fetch_array($resultAVG);
+                        if($rowAVG['avg'] == null)
+                          echo 0;
+                        else
+                          echo round($rowAVG['avg'],1);
+                        mysqli_free_result($resultAVG);
+                      }else
+                        echo 0;
+                      mysqli_close($link);
+                    ?>
+                  </div>
+                </div>
+                </div>
               </div>
-            </div>
+              <!-- /top tiles -->
 
+              </div>
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Chart</h2>
-                    <div class="clearfix"></div>
-                  </div>
                   <div class="x_content">
                     <div class="row">
                       <div class="col-md-12 col-sm-12 col-xs-12">
@@ -121,13 +191,18 @@
                             <div class="col-md-6">
                               <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-                                <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
+                                <span></span> <b class="caret"></b>
+
                               </div>
+                              
+                              
                             </div>
                           </div>
                           <div class="x_content">
                             <div class="demo-container" style="height:250px">
-                              <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;"></div>
+                              <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;">
+                                
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -164,77 +239,60 @@
     <script src="build/js/custom.min.js"></script>
 
     <!-- bootstrap-daterangepicker -->
-    <script type="text/javascript">
-      $(document).ready(function() {
+      <script type="text/javascript">
+      
+         $(document).ready(function() {
+          var startDate = '<?php echo $start ?>';
+          var endDate = '<?php echo $end ?>';
+            $('#reportrange').daterangepicker(
+               {
+                  startDate: moment(),
+                  endDate: moment(),
+                  minDate: '01/01/2016',
+                  maxDate: '12/31/2030',
+                  dateLimit: {
+                    days: 60
+                  },
+                  showDropdowns: true,
+                  showWeekNumbers: true,
+                  timePicker: false,
+                  timePickerIncrement: 1,
+                  timePicker12Hour: true,
+                  ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                  },
+                  opens: 'left',
+                  buttonClasses: ['btn btn-default'],
+                  applyClass: 'btn-small btn-primary',
+                  cancelClass: 'btn-small',
+                  format: 'MM/DD/YYYY',
+                  separator: ' to ',
+                  locale: {
+                    applyLabel: 'Submit',
+                    fromLabel: 'From',
+                    toLabel: 'To',
+                    customRangeLabel: 'Custom',
+                    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    firstDay: 1
+                  }
+               },
+               function(start, end) {
+                console.log("Callback has been called!");
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                window.location.href="humidityChart.php?startDate="+start.format('YYYY-M-D')+"&endDate="+end.format('YYYY-M-D');
+               }
+            );
+            //Set the initial state of the picker label
+            $('#reportrange span').html(startDate + ' - ' + endDate);
+         });
 
-        var cb = function(start, end, label) {
-          console.log(start.toISOString(), end.toISOString(), label);
-          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        };
-
-        var optionSet1 = {
-          startDate: moment().subtract(29, 'days'),
-          endDate: moment(),
-          minDate: '01/01/2012',
-          maxDate: '12/31/2015',
-          dateLimit: {
-            days: 60
-          },
-          showDropdowns: true,
-          showWeekNumbers: true,
-          timePicker: false,
-          timePickerIncrement: 1,
-          timePicker12Hour: true,
-          ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          },
-          opens: 'left',
-          buttonClasses: ['btn btn-default'],
-          applyClass: 'btn-small btn-primary',
-          cancelClass: 'btn-small',
-          format: 'MM/DD/YYYY',
-          separator: ' to ',
-          locale: {
-            applyLabel: 'Submit',
-            cancelLabel: 'Clear',
-            fromLabel: 'From',
-            toLabel: 'To',
-            customRangeLabel: 'Custom',
-            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            firstDay: 1
-          }
-        };
-        $('#reportrange span').html(moment().subtract(29, 'days').format('MMMM D, YYYY') + ' - ' + moment().format('MMMM D, YYYY'));
-        $('#reportrange').daterangepicker(optionSet1, cb);
-        $('#reportrange').on('show.daterangepicker', function() {
-          console.log("show event fired");
-        });
-        $('#reportrange').on('hide.daterangepicker', function() {
-          console.log("hide event fired");
-        });
-        $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-          console.log("apply event fired, start/end dates are " + picker.startDate.format('MMMM D, YYYY') + " to " + picker.endDate.format('MMMM D, YYYY'));
-        });
-        $('#reportrange').on('cancel.daterangepicker', function(ev, picker) {
-          console.log("cancel event fired");
-        });
-        $('#options1').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet1, cb);
-        });
-        $('#options2').click(function() {
-          $('#reportrange').data('daterangepicker').setOptions(optionSet2, cb);
-        });
-        $('#destroy').click(function() {
-          $('#reportrange').data('daterangepicker').remove();
-        });
-      });
-    </script>
+         </script>
     <!-- /bootstrap-daterangepicker -->
   </body>
 </html>
