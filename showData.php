@@ -1,34 +1,26 @@
 <?php
 	include ("session.php");
-		
-	$link=Connection();
 
-	$result=mysqli_query($link,"SELECT * FROM `templog` ORDER BY `timeStamp` DESC");
+  $link=Connection();
+
+  $result=mysqli_query($link,"SELECT * FROM `templog` ORDER BY `timeStamp` DESC");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>DataTables</title>
+    <title>Show Data</title>
 
-    <!-- Bootstrap -->
-     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-     <!-- Font Awesome -->
-     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-     <!-- Datatables -->
+    <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Theme Style -->
-     <link href="build/css/custom.min.css" rel="stylesheet">
+    <link href="build/css/custom.min.css" rel="stylesheet">
    </head>
-
   <body class="nav-md">
     <div class="container body">
       <div class="main_container">      
@@ -37,7 +29,6 @@
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.php" class="site_title"><i class="fa fa-paw"></i> <span>IoT</span></a>
             </div>
-
             <div class="clearfix"></div>
             <!-- menu profile quick info -->
             <div class="profile clearfix">
@@ -50,7 +41,6 @@
               </div>
             </div>
             <!-- /menu profile quick info -->
-
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
@@ -68,11 +58,8 @@
               </div>
             </div>
             <!-- /sidebar menu -->
-            
-            
           </div>
         </div>
-
         <!-- top navigation -->
         <div class="top_nav navbar-fixed-top">
           <div class="nav_menu">
@@ -80,7 +67,6 @@
               <div class="nav toggle">
                 <a id="menu_toggle"><i class="fa fa-bars"></i></a>
               </div>
-
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -102,10 +88,8 @@
           <div class="">
             <div class="page-title">
               <div class="title_left">
-                
               </div>
             </div>
-
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
@@ -124,15 +108,15 @@
                       </thead>
                       <tbody>
                       	<?php 
-  							if($result!==FALSE){
-	     						while($row = mysqli_fetch_array($result)) {
-	        						printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
-	           						$row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
-	     					}
-	     					mysqli_free_result($result);
-	     					mysqli_close($link);
-	  						}  
-      					?>
+  							          if($result!==FALSE){
+                            while($row = mysqli_fetch_array($result)) {
+                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
+                                $row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
+                            }
+                            mysqli_free_result($result);
+                            mysqli_close($link);
+                          }
+                        ?>
                       </tbody>
                     </table>
                   </div>
@@ -145,7 +129,6 @@
         <!-- footer content -->
         <footer>
           <div class="pull-right">
-             
           </div>
           <div class="clearfix"></div>
         </footer>
@@ -153,23 +136,15 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-     <script src="vendors/jquery/dist/jquery.min.js"></script> 
-    <!-- Bootstrap -->
-     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-   
-     <!-- Datatables -->
+    <script src="vendors/jquery/dist/jquery.min.js"></script> 
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="vendors/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <script src="vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    
-    <!-- Custom Theme Scripts -->
-     <script src="build/js/custom.min.js"></script> 
+    <script src="build/js/custom.min.js"></script>
 
-    <!-- Datatables -->
     <script>
         $('#datatable-responsive').DataTable();
     </script> 
-    <!-- /Datatables -->
   </body>
 </html>

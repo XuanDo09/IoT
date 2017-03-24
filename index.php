@@ -1,27 +1,20 @@
 <?php
 	include ("session.php");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>DataTables</title>
+    <title>Index</title>
 
-    <!-- Bootstrap -->
-     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-     <!-- Font Awesome -->
-     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-     
-    <!-- Custom Theme Style -->
-     <link href="build/css/custom.min.css" rel="stylesheet">
+    <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="build/css/custom.min.css" rel="stylesheet">
    </head>
-
   <body class="nav-md">
     <div class="container body">
       <div class="main_container">      
@@ -30,7 +23,6 @@
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.php" class="site_title"><i class="fa fa-paw"></i> <span>IoT</span></a>
             </div>
-
             <div class="clearfix"></div>
             <!-- menu profile quick info -->
             <div class="profile clearfix">
@@ -60,11 +52,8 @@
               </div>
             </div>
             <!-- /sidebar menu -->
-            
-            
           </div>
         </div>
-
         <!-- top navigation -->
         <div class="top_nav navbar-fixed-top">
           <div class="nav_menu">
@@ -72,7 +61,6 @@
               <div class="nav toggle">
                 <a id="menu_toggle"><i class="fa fa-bars"></i></a>
               </div>
-
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -94,10 +82,8 @@
           <div class="">
             <div class="page-title">
               <div class="title_left">
-                
               </div>
             </div>
-
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
@@ -105,7 +91,6 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    
                   </div>
                 </div>
               </div>
@@ -116,21 +101,14 @@
         <!-- footer content -->
         <footer>
           <div class="pull-right">
-             
           </div>
           <div class="clearfix"></div>
         </footer>
         <!-- /footer content -->
       </div>
     </div>
-
-    <!-- jQuery -->
-     <script src="vendors/jquery/dist/jquery.min.js"></script> 
-    <!-- Bootstrap -->
-     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-   
-    <!-- Custom Theme Scripts -->
-     <script src="build/js/custom.min.js"></script> 
-
+    <script src="vendors/jquery/dist/jquery.min.js"></script> 
+    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="build/js/custom.min.js"></script> 
   </body>
 </html>
