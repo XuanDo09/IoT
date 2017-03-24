@@ -9,6 +9,7 @@
   $startTRP = date('F d, Y');
   $endDate = $currentDate;
   $endTRP = date('F d, Y');
+
   if(isset($_GET["startDate"]) && isset($_GET["endDate"])){
     $startDate = $_REQUEST["startDate"];
     $startTRP = date('F d, Y',strtotime($startDate));
@@ -16,33 +17,44 @@
     $endTRP = date('F d, Y',strtotime($endDate));
   }
 
+  $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($currentDate)));
+  $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($currentDate)));
+
   $current = new DateTime($currentDate);
   $start = new DateTime($startDate);
   $end = new DateTime($endDate);
+  $startWeek = new DateTime($weekStartDate);
+  $endWeek = new DateTime($weekEndDate);
   $startMonth = new DateTime(date('Y-m-1'));
   $endMonth = new DateTime(date('Y-m-t'));
   $startLastMonth = new DateTime(date('Y-m-1',strtotime("-1 month")));
   $endLastMonth = new DateTime(date('Y-m-t',strtotime("-1 month")));
+  $startYear = new DateTime(date('Y-1-1'));
+  $endYear = new DateTime(date('Y-12-31'));
 
   $numStart = $start->diff($current)->format("%a");
   $numEnd = $end->diff($current)->format("%a");
+  $numStartWeek = $start->diff($startWeek)->format("%a");
+  $numEndWeek = $end->diff($endWeek)->format("%a");
   $numStartMonth = $start->diff($startMonth)->format("%a");
   $numEndMonth = $end->diff($endMonth)->format("%a");
   $numStartLastMonth = $start->diff($startLastMonth)->format("%a");
   $numEndLastMonth = $end->diff($endLastMonth)->format("%a");
+  $numStartYear = $start->diff($startYear)->format("%a");
+  $numEndYear = $end->diff($endYear)->format("%a");  
 
   if ($numStart==0 && $numEnd==0) {
     $strDate = "Today";
   }else if ($numStart==1 && $numEnd==1) {
     $strDate = "Yesterday";
-  }else if ($numStart==6 && $numEnd==0) {
-    $strDate = "Last 7 Days";
-  }else if ($numStart==29 && $numEnd==0) {
-    $strDate = "Last 30 Days";
+  }else if ($numStartWeek==0 && $numEndWeek==0) {
+    $strDate = "This Week";
   }else if ($numStartMonth==0 && $numEndMonth==0) {
     $strDate = "This Month";
   }else if($numStartLastMonth==0 && $numEndLastMonth==0){
     $strDate = "Last Month";
+  }else if($numStartYear==0 && $numEndYear==0){
+    $strDate = "This Year";
   }else{
     $strDate = "Custom";
   }
@@ -59,21 +71,15 @@
   <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>DataTables</title>
+    <title>Temperature page</title>
 
-    <!-- Bootstrap -->
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <!-- bootstrap-daterangepicker -->
     <link href="vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-
-    <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
   </head>
 
@@ -85,7 +91,6 @@
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.php" class="site_title"><i class="fa fa-paw"></i> <span>IoT</span></a>
             </div>
-
             <div class="clearfix"></div>
             <!-- menu profile quick info -->
             <div class="profile clearfix">
@@ -117,7 +122,6 @@
             <!-- /sidebar menu -->           
           </div>
         </div>
-
         <!-- top navigation -->
         <div class="top_nav navbar-fixed-top">
           <div class="nav_menu">
@@ -125,7 +129,6 @@
               <div class="nav toggle">
                 <a id="menu_toggle"><i class="fa fa-bars"></i></a>
               </div>
-
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -158,15 +161,15 @@
                   <span class="count_top"><i class="fa fa-arrow-up green"></i> Maximum</span>
                   <div class="count green">
                     <?php
-                    if($resultMax!==FALSE){
-                      $rowMax = mysqli_fetch_array($resultMax);
-                      if($rowMax['max'] == null)
-                        echo 0;
-                      else
-                        echo round($rowMax['max'],1);
-                      mysqli_free_result($resultMax);
-                    }else
-                    echo 0;
+                      if($resultMax!==FALSE){
+                        $rowMax = mysqli_fetch_array($resultMax);
+                        if($rowMax['max'] == null)
+                          echo 0;
+                        else
+                          echo round($rowMax['max'],1);
+                        mysqli_free_result($resultMax);
+                      }else
+                      echo 0;
                     ?>
                   </div>
                 </div>
@@ -174,15 +177,15 @@
                   <span class="count_top"><i class="fa fa-arrow-down red"></i> Minimum</span>
                   <div class="count red">
                     <?php
-                    if($resultMin!==FALSE){
-                      $rowMin = mysqli_fetch_array($resultMin);
-                      if($rowMin['min'] == null)
-                        echo 0;
-                      else
-                        echo round($rowMin['min'],1);
-                      mysqli_free_result($resultMin);
-                    }else
-                    echo 0;
+                      if($resultMin!==FALSE){
+                        $rowMin = mysqli_fetch_array($resultMin);
+                        if($rowMin['min'] == null)
+                          echo 0;
+                        else
+                          echo round($rowMin['min'],1);
+                        mysqli_free_result($resultMin);
+                      }else
+                      echo 0;
                     ?>
                   </div>
                 </div>
@@ -190,23 +193,22 @@
                   <span class="count_top"><i class="fa fa-plus-square-o"></i> Average</span>
                   <div class="count">
                     <?php
-                    if($resultAVG!==FALSE){
-                      $rowAVG = mysqli_fetch_array($resultAVG);
-                      if($rowAVG['avg'] == null)
-                        echo 0;
-                      else
-                        echo round($rowAVG['avg'],1);
-                      mysqli_free_result($resultAVG);
-                    }else
-                    echo 0;
-                    mysqli_close($link);
+                      if($resultAVG!==FALSE){
+                        $rowAVG = mysqli_fetch_array($resultAVG);
+                        if($rowAVG['avg'] == null)
+                          echo 0;
+                        else
+                          echo round($rowAVG['avg'],1);
+                        mysqli_free_result($resultAVG);
+                      }else
+                      echo 0;
+                      mysqli_close($link);
                     ?>
                   </div>
                 </div>
               </div>
             </div>
             <!-- /top tiles -->
-
           </div>
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
@@ -222,14 +224,12 @@
                           <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                             <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                             <span></span> <b class="caret"></b>
-
                           </div>
                         </div>
                       </div>
                       <div class="x_content">
                         <div class="demo-container" style="height:250px">
                           <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;">
-                            
                           </div>
                         </div>
                       </div>
@@ -242,7 +242,6 @@
         </div>
       </div>
       <!-- /page content -->
-
       <!-- footer content -->
       <footer>
         <div class="pull-right">
@@ -253,22 +252,14 @@
     </div>
   </div>
 
-  <!-- jQuery -->
   <script src="vendors/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap -->
   <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-  <!-- DateJS -->
   <script src="vendors/DateJS/build/date.js"></script>
-  <!-- bootstrap-daterangepicker -->
   <script src="vendors/moment/min/moment.min.js"></script>
   <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
-
-  <!-- Custom Theme Scripts -->
   <script src="build/js/custom.min.js"></script>
 
-  <!-- bootstrap-daterangepicker -->
   <script type="text/javascript">
-
    $(document).ready(function() {
     var startDate = '<?php echo $startTRP ?>';
     var endDate = '<?php echo $endTRP ?>';
@@ -286,15 +277,14 @@
       timePicker: false,
       timePickerIncrement: 1,
       timePicker12Hour: true,
-
       ranges: {
         'Select Day!':[moment().subtract(1, 'days'),moment()],
         'Today': [moment(), moment()],
         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Week': [moment().startOf('week').add(1, 'days'), moment().endOf('week').add(1, 'days')],
         'This Month': [moment().startOf('month'), moment().endOf('month')],
-        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+        'This Year': [moment().startOf('year'), moment().endOf('year')]
       },
       opens: 'left',
       buttonClasses: ['btn btn-default'],
@@ -318,12 +308,8 @@
       window.location.href="temperatureChart.php?startDate="+start.format('YYYY-M-D')+"&endDate="+end.format('YYYY-M-D');
     }
     );
-    //Set the initial state of the picker label
     $('#reportrange span').html(startDate + ' - ' + endDate);
-
   });
-
 </script>
-<!-- /bootstrap-daterangepicker -->
 </body>
 </html>
