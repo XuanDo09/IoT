@@ -1,31 +1,62 @@
 <?php
   include ("session.php");
-    
+
   $link=Connection();
 
+  $strDate = "Today";
   $currentDate = date('Y-m-d'); 
   $startDate = $currentDate;
-  $start = date('F d, Y');
+  $startTRP = date('F d, Y');
   $endDate = $currentDate;
-  $end = date('F d, Y');
+  $endTRP = date('F d, Y');
   if(isset($_GET["startDate"]) && isset($_GET["endDate"])){
     $startDate = $_REQUEST["startDate"];
-    $start = date('F d, Y',strtotime($startDate));
+    $startTRP = date('F d, Y',strtotime($startDate));
     $endDate = $_REQUEST["endDate"];
-    $end = date('F d, Y',strtotime($endDate));
+    $endTRP = date('F d, Y',strtotime($endDate));
+  }
+
+  $current = new DateTime($currentDate);
+  $start = new DateTime($startDate);
+  $end = new DateTime($endDate);
+  $startMonth = new DateTime(date('Y-m-1'));
+  $endMonth = new DateTime(date('Y-m-t'));
+  $startLastMonth = new DateTime(date('Y-m-1',strtotime("-1 month")));
+  $endLastMonth = new DateTime(date('Y-m-t',strtotime("-1 month")));
+
+  $numStart = $start->diff($current)->format("%a");
+  $numEnd = $end->diff($current)->format("%a");
+  $numStartMonth = $start->diff($startMonth)->format("%a");
+  $numEndMonth = $end->diff($endMonth)->format("%a");
+  $numStartLastMonth = $start->diff($startLastMonth)->format("%a");
+  $numEndLastMonth = $end->diff($endLastMonth)->format("%a");
+
+  if ($numStart==0 && $numEnd==0) {
+    $strDate = "Today";
+  }else if ($numStart==1 && $numEnd==1) {
+    $strDate = "Yesterday";
+  }else if ($numStart==6 && $numEnd==0) {
+    $strDate = "Last 7 Days";
+  }else if ($numStart==29 && $numEnd==0) {
+    $strDate = "Last 30 Days";
+  }else if ($numStartMonth==0 && $numEndMonth==0) {
+    $strDate = "This Month";
+  }else if($numStartLastMonth==0 && $numEndLastMonth==0){
+    $strDate = "Last Month";
+  }else{
+    $strDate = "Custom";
   }
 
   $resultMax=mysqli_query($link,"SELECT MAX(`moisture`) AS `max` FROM `templog` 
-                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
   $resultMin=mysqli_query($link,"SELECT MIN(`moisture`) AS `min` FROM `templog` 
-                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
   $resultAVG=mysqli_query($link,"SELECT AVG(`moisture`) AS `avg` FROM `templog` 
-                                WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
-
+    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+  <!DOCTYPE html>
+  <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -36,15 +67,15 @@
     <title>DataTables</title>
 
     <!-- Bootstrap -->
-     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- bootstrap-daterangepicker -->
     <link href="vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
     <!-- Custom Theme Style -->
-     <link href="build/css/custom.min.css" rel="stylesheet">
-   </head>
+    <link href="build/css/custom.min.css" rel="stylesheet">
+  </head>
 
   <body class="nav-md">
     <div class="container body">
@@ -83,8 +114,7 @@
                 </ul>
               </div>
             </div>
-            <!-- /sidebar menu -->
-            
+            <!-- /sidebar menu -->           
           </div>
         </div>
 
@@ -122,21 +152,21 @@
               <div class="row tile_count">
                 <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
                   <div class="count_top"><i class="fa fa-line-chart blue"></i> Data</div>
-                  <div class="count blue">Today</div>
+                  <div class="count blue"><?php echo $strDate; ?></div>
                 </div>
                 <div class="col-md-3 col-sm-4 col-xs-6 tile_stats_count">
                   <span class="count_top"><i class="fa fa-arrow-up green"></i> Maximum</span>
                   <div class="count green">
                     <?php
-                      if($resultMax!==FALSE){
-                        $rowMax = mysqli_fetch_array($resultMax);
-                        if($rowMax['max'] == null)
-                          echo 0;
-                        else
-                          echo round($rowMax['max'],1);
-                        mysqli_free_result($resultMax);
-                      }else
+                    if($resultMax!==FALSE){
+                      $rowMax = mysqli_fetch_array($resultMax);
+                      if($rowMax['max'] == null)
                         echo 0;
+                      else
+                        echo round($rowMax['max'],1);
+                      mysqli_free_result($resultMax);
+                    }else
+                    echo 0;
                     ?>
                   </div>
                 </div>
@@ -144,15 +174,15 @@
                   <span class="count_top"><i class="fa fa-arrow-down red"></i> Minimum</span>
                   <div class="count red">
                     <?php
-                      if($resultMin!==FALSE){
-                        $rowMin = mysqli_fetch_array($resultMin);
-                        if($rowMin['min'] == null)
-                          echo 0;
-                        else
-                          echo round($rowMin['min'],1);
-                        mysqli_free_result($resultMin);
-                      }else
+                    if($resultMin!==FALSE){
+                      $rowMin = mysqli_fetch_array($resultMin);
+                      if($rowMin['min'] == null)
                         echo 0;
+                      else
+                        echo round($rowMin['min'],1);
+                      mysqli_free_result($resultMin);
+                    }else
+                    echo 0;
                     ?>
                   </div>
                 </div>
@@ -160,50 +190,46 @@
                   <span class="count_top"><i class="fa fa-plus-square-o"></i> Average</span>
                   <div class="count">
                     <?php
-                      if($resultAVG!==FALSE){
-                        $rowAVG = mysqli_fetch_array($resultAVG);
-                        if($rowAVG['avg'] == null)
-                          echo 0;
-                        else
-                          echo round($rowAVG['avg'],1);
-                        mysqli_free_result($resultAVG);
-                      }else
+                    if($resultAVG!==FALSE){
+                      $rowAVG = mysqli_fetch_array($resultAVG);
+                      if($rowAVG['avg'] == null)
                         echo 0;
-                      mysqli_close($link);
+                      else
+                        echo round($rowAVG['avg'],1);
+                      mysqli_free_result($resultAVG);
+                    }else
+                    echo 0;
+                    mysqli_close($link);
                     ?>
                   </div>
                 </div>
-                </div>
               </div>
-              <!-- /top tiles -->
+            </div>
+            <!-- /top tiles -->
 
-              </div>
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                  <div class="x_content">
-                    <div class="row">
-                      <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="dashboard_graph x_panel">
-                          <div class="row x_title">
-                            <div class="col-md-6">
-                              <h3>Average Monthly Moistures</h3>
-                            </div>
-                            <div class="col-md-6">
-                              <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-                                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-                                <span></span> <b class="caret"></b>
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="dashboard_graph x_panel">
+                      <div class="row x_title">
+                        <div class="col-md-6">
+                          <h3>Average Monthly Moistures</h3>
+                        </div>
+                        <div class="col-md-6">
+                          <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                            <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                            <span></span> <b class="caret"></b>
 
-                              </div>
-                              
-                              
-                            </div>
                           </div>
-                          <div class="x_content">
-                            <div class="demo-container" style="height:250px">
-                              <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;">
-                                
-                              </div>
-                            </div>
+                        </div>
+                      </div>
+                      <div class="x_content">
+                        <div class="demo-container" style="height:250px">
+                          <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;">
+                            
                           </div>
                         </div>
                       </div>
@@ -213,86 +239,91 @@
               </div>
             </div>
           </div>
-        <!-- /page content -->
-        
-        <!-- footer content -->
-        <footer>
-          <div class="pull-right">
-          </div>
-          <div class="clearfix"></div>
-        </footer>
-        <!-- /footer content -->
+        </div>
       </div>
+      <!-- /page content -->
+
+      <!-- footer content -->
+      <footer>
+        <div class="pull-right">
+        </div>
+        <div class="clearfix"></div>
+      </footer>
+      <!-- /footer content -->
     </div>
+  </div>
 
-    <!-- jQuery -->
-    <script src="vendors/jquery/dist/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- DateJS -->
-    <script src="vendors/DateJS/build/date.js"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="vendors/moment/min/moment.min.js"></script>
-    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <!-- jQuery -->
+  <script src="vendors/jquery/dist/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+  <!-- DateJS -->
+  <script src="vendors/DateJS/build/date.js"></script>
+  <!-- bootstrap-daterangepicker -->
+  <script src="vendors/moment/min/moment.min.js"></script>
+  <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-    <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+  <!-- Custom Theme Scripts -->
+  <script src="build/js/custom.min.js"></script>
 
-    <!-- bootstrap-daterangepicker -->
-      <script type="text/javascript">
-      
-         $(document).ready(function() {
-          var startDate = '<?php echo $start ?>';
-          var endDate = '<?php echo $end ?>';
-            $('#reportrange').daterangepicker(
-               {
-                  startDate: moment(),
-                  endDate: moment(),
-                  minDate: '01/01/2016',
-                  maxDate: '12/31/2030',
-                  dateLimit: {
-                    days: 60
-                  },
-                  showDropdowns: true,
-                  showWeekNumbers: true,
-                  timePicker: false,
-                  timePickerIncrement: 1,
-                  timePicker12Hour: true,
-                  ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                  },
-                  opens: 'left',
-                  buttonClasses: ['btn btn-default'],
-                  applyClass: 'btn-small btn-primary',
-                  cancelClass: 'btn-small',
-                  format: 'MM/DD/YYYY',
-                  separator: ' to ',
-                  locale: {
-                    applyLabel: 'Submit',
-                    fromLabel: 'From',
-                    toLabel: 'To',
-                    customRangeLabel: 'Custom',
-                    daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                    firstDay: 1
-                  }
-               },
-               function(start, end) {
-                console.log("Callback has been called!");
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                window.location.href="moistureChart.php?startDate="+start.format('YYYY-M-D')+"&endDate="+end.format('YYYY-M-D');
-               }
-            );
-            //Set the initial state of the picker label
-            $('#reportrange span').html(startDate + ' - ' + endDate);
-         });
+  <!-- bootstrap-daterangepicker -->
+  <script type="text/javascript">
 
-         </script>
-    <!-- /bootstrap-daterangepicker -->
-  </body>
+   $(document).ready(function() {
+    var startDate = '<?php echo $startTRP ?>';
+    var endDate = '<?php echo $endTRP ?>';
+    $('#reportrange').daterangepicker(
+    {
+      startDate: moment().subtract(1, 'days'),
+      endDate: moment(),
+      minDate: '01/01/2016',
+      maxDate: '12/31/2030',
+      dateLimit: {
+        days: 60
+      },
+      showDropdowns: true,
+      showWeekNumbers: true,
+      timePicker: false,
+      timePickerIncrement: 1,
+      timePicker12Hour: true,
+
+      ranges: {
+        'Select Day!':[moment().subtract(1, 'days'),moment()],
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      opens: 'left',
+      buttonClasses: ['btn btn-default'],
+      applyClass: 'btn-small btn-primary',
+      cancelClass: 'btn-small',
+      format: 'MM/DD/YYYY',
+      separator: ' to ',
+      locale: {
+        applyLabel: 'Submit',
+        fromLabel: 'From',
+        toLabel: 'To',
+        customRangeLabel: 'Custom',
+        daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        firstDay: 1
+      }
+    },
+    function(start, end) {
+      console.log("Callback has been called!");
+      $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+      window.location.href="moistureChart.php?startDate="+start.format('YYYY-M-D')+"&endDate="+end.format('YYYY-M-D');
+    }
+    );
+    //Set the initial state of the picker label
+    $('#reportrange span').html(startDate + ' - ' + endDate);
+
+  });
+
+</script>
+<!-- /bootstrap-daterangepicker -->
+</body>
 </html>
