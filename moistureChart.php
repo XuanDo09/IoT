@@ -382,7 +382,7 @@
     series: [{
         name: 'Ho Chi Minh',
         marker: {
-            symbol: 'square'
+            symbol: 'diamond'
         },
         data: <?php print json_encode($data, JSON_NUMERIC_CHECK); ?>
     }]

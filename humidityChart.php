@@ -381,9 +381,6 @@
     },
     series: [{
         name: 'Ho Chi Minh',
-        marker: {
-            symbol: 'square'
-        },
         data: <?php print json_encode($data, JSON_NUMERIC_CHECK); ?>
     }]
   });
