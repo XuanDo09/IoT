@@ -4,6 +4,7 @@
   $link=Connection();
 
   $strDate = "Today";
+  $groupBy = "HOUR";
   $currentDate = date('Y-m-d'); 
   $startDate = $currentDate;
   $startTRP = date('F d, Y');
@@ -17,8 +18,16 @@
     $endTRP = date('F d, Y',strtotime($endDate));
   }
 
-  $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($currentDate)));
-  $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($currentDate)));
+  if(date("N",strtotime($currentDate))==1){
+		$weekStartDate = $currentDate;
+		$weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($currentDate)));
+	} elseif (date("N",strtotime($currentDate))==7) {
+		$weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($currentDate)));
+		$weekEndDate = $currentDate;
+	}else{
+		$weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($currentDate)));
+  	$weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($currentDate)));
+	}
 
   $current = new DateTime($currentDate);
   $start = new DateTime($startDate);
@@ -45,26 +54,45 @@
 
   if ($numStart==0 && $numEnd==0) {
     $strDate = "Today";
+    $groupBy = "HOUR";
   }else if ($numStart==1 && $numEnd==1) {
     $strDate = "Yesterday";
+    $groupBy = "HOUR";
   }else if ($numStartWeek==0 && $numEndWeek==0) {
     $strDate = "This Week";
+    $groupBy = "DAY";
   }else if ($numStartMonth==0 && $numEndMonth==0) {
     $strDate = "This Month";
+    $groupBy = "DAY";
   }else if($numStartLastMonth==0 && $numEndLastMonth==0){
     $strDate = "Last Month";
+    $groupBy = "DAY";
   }else if($numStartYear==0 && $numEndYear==0){
     $strDate = "This Year";
+    $groupBy = "MONTH";
   }else{
     $strDate = "Custom";
+    $groupBy = "DAY";
   }
 
-  $resultMax=mysqli_query($link,"SELECT MAX(`moisture`) AS `max` FROM `templog` 
+  $resultMax=mysqli_query($link,"SELECT ROUND(MAX(`moisture`),1) AS `max` FROM `templog` 
     WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
-  $resultMin=mysqli_query($link,"SELECT MIN(`moisture`) AS `min` FROM `templog` 
+  $resultMin=mysqli_query($link,"SELECT ROUND(MIN(`moisture`),1) AS `min` FROM `templog` 
     WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
-  $resultAVG=mysqli_query($link,"SELECT AVG(`moisture`) AS `avg` FROM `templog` 
+  $resultAVG=mysqli_query($link,"SELECT ROUND(AVG(`moisture`),1) AS `avg` FROM `templog` 
     WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+
+  $data = array();
+  $result=mysqli_query($link,"SELECT (UNIX_TIMESTAMP(CONVERT_TZ(`timeStamp`, '+00:00', @@global.time_zone))*1000) AS t, ROUND(MAX(`moisture`),2) AS avg FROM templog 
+    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."' 
+    GROUP BY YEAR(`timeStamp`), ".$groupBy."(`timeStamp`)");
+  if($result!=FALSE){
+    while($row = mysqli_fetch_array($result)) {
+        $r[0] = $row['t'];
+        $r[1] = $row["avg"]; 
+        array_push($data,$r);
+    }   
+  }
 ?>
 
   <!DOCTYPE html>
@@ -75,12 +103,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Moisture page</title>
+    <title>Temperature page</title>
 
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
     <link href="build/css/custom.min.css" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
   </head>
 
   <body class="nav-md">
@@ -91,7 +120,6 @@
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.php" class="site_title"><i class="fa fa-paw"></i> <span>IoT</span></a>
             </div>
-
             <div class="clearfix"></div>
             <!-- menu profile quick info -->
             <div class="profile clearfix">
@@ -167,7 +195,7 @@
                         if($rowMax['max'] == null)
                           echo 0;
                         else
-                          echo round($rowMax['max'],1);
+                          echo $rowMax['max'];
                         mysqli_free_result($resultMax);
                       }else
                       echo 0;
@@ -183,7 +211,7 @@
                         if($rowMin['min'] == null)
                           echo 0;
                         else
-                          echo round($rowMin['min'],1);
+                          echo $rowMin['min'];
                         mysqli_free_result($resultMin);
                       }else
                       echo 0;
@@ -199,11 +227,10 @@
                         if($rowAVG['avg'] == null)
                           echo 0;
                         else
-                          echo round($rowAVG['avg'],1);
+                          echo $rowAVG['avg'];
                         mysqli_free_result($resultAVG);
                       }else
                       echo 0;
-                      mysqli_close($link);
                     ?>
                   </div>
                 </div>
@@ -219,7 +246,7 @@
                     <div class="dashboard_graph x_panel">
                       <div class="row x_title">
                         <div class="col-md-6">
-                          <h3>Average Monthly Moistures</h3>
+                          <h3>Soil Moisture Chart</h3>
                         </div>
                         <div class="col-md-6">
                           <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
@@ -229,8 +256,9 @@
                         </div>
                       </div>
                       <div class="x_content">
-                        <div class="demo-container" style="height:250px">
-                          <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:250px;">
+                        <div class="demo-container" style="height:450px">
+                          <div id="placeholder3xx3" class="demo-placeholder" style="width: 100%; height:400px;">
+                            
                           </div>
                         </div>
                       </div>
@@ -282,7 +310,7 @@
         'Select Day!':[moment().subtract(1, 'days'),moment()],
         'Today': [moment(), moment()],
         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'This Week': [moment().startOf('week').add(1, 'days'), moment().endOf('week').add(1, 'days')],
+        'This Week': [moment().startOf('isoweek'), moment().endOf('isoweek')],
         'This Month': [moment().startOf('month'), moment().endOf('month')],
         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
         'This Year': [moment().startOf('year'), moment().endOf('year')]
@@ -311,6 +339,56 @@
     );
     $('#reportrange span').html(startDate + ' - ' + endDate);
   });
+
+  $(function(){
+    Highcharts.chart('placeholder3xx3', {
+    chart: {
+        type: 'line'
+    },
+    title: {
+        text: 'Average Soil Moisture'
+    },
+    global: {
+        useUTC: false
+    },
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150,
+        maxZoom: 20 * 1000
+    },
+    yAxis: {
+        title: {
+            text: 'Moisture (%)'
+        },
+        labels: {
+            formatter: function () {
+                return this.value;
+            }
+        }
+    },
+    tooltip: {
+        crosshairs: true,
+        shared: true
+    },
+    plotOptions: {
+        spline: {
+            marker: {
+                radius: 4,
+                lineColor: '#666666',
+                lineWidth: 1
+            }
+        }
+    },
+    series: [{
+        name: 'Ho Chi Minh',
+        marker: {
+            symbol: 'square'
+        },
+        data: <?php print json_encode($data, JSON_NUMERIC_CHECK); ?>
+    }]
+  });
+});
+
 </script>
 </body>
 </html>
