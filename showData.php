@@ -104,14 +104,15 @@
                           <th>Temperature</th>
                           <th>Humidity</th>
                           <th>Moisture</th>
+                          <th>Place</th>
                         </tr>
                       </thead>
                       <tbody>
                       	<?php 
   							          if($result!==FALSE){
                             while($row = mysqli_fetch_array($result)) {
-                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
-                                $row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"]);
+                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
+                                $row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"], $row["place"]);
                             }
                             mysqli_free_result($result);
                             mysqli_close($link);
