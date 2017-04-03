@@ -12,6 +12,7 @@
 	      $query = "INSERT INTO sensors(name,place, user) 
 			            VALUES ('".$name."','".$place."','".$userData['username']."');";
         $addResult = mysqli_query($link,$query);
+        header("location:index.php");
     }
   }
   
