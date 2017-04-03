@@ -1,5 +1,20 @@
 <?php
 	include ("session.php");
+  include ("connect.php");
+  $link=Connection();
+
+  $result=mysqli_query($link,"SELECT * FROM sensors");
+  if(isset($_POST['add_sensor'])){
+    if(!empty($_POST['name']) && !empty($_POST['place'])){
+        $name = $_POST['name'];
+	      $place = $_POST['place'];
+
+	      $query = "INSERT INTO sensors(name,place, user) 
+			            VALUES ('".$name."','".$place."','".$userData['username']."');";
+        $addResult = mysqli_query($link,$query);
+    }
+  }
+  
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +28,8 @@
 
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
     <link href="build/css/custom.min.css" rel="stylesheet">
    </head>
   <body class="nav-md">
@@ -31,7 +48,7 @@
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
-                <h2><?php echo $user_session ?></h2>
+                <h2><?php echo $userData['username']; ?></h2>
               </div>
             </div>
             <!-- /menu profile quick info -->
@@ -64,12 +81,12 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="images/img.jpg" alt=""><?php echo $user_session?>
+                    <img src="images/img.jpg" alt=""><?php echo $userData['username'];?>
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
                     <li><a href="javascript:;">Help</a></li>
-                    <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="userAccount.php?logoutSubmit=1"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
               </ul>
@@ -87,11 +104,53 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>home page</h2>
+                    <h2>Equipment Management</h2>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
+                    <h2>Sensors Table</h2>
+                    <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th>ID Sensor</th>
+                          <th>Name</th>
+                          <th>Place</th>
+                          <th>User</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      	<?php 
+  							          if($result!==FALSE){
+                            while($row = mysqli_fetch_array($result)) {
+                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
+                                $row["id"],$row["name"], $row["place"],$row["user"]);
+                            }
+                            mysqli_free_result($result);
+                            mysqli_close($link);
+                          }
+                        ?>
+                      </tbody>
+                    </table>
                   </div>
+                  <h2>Add sensor</h2>
+                  <form class="form-horizontal form-label-left input_mask" method="POST" action="">
+                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" id="name" name="name" placeholder="Name">
+                        <span class="fa fa-cogs form-control-feedback left" aria-hidden="true"></span>
+                      </div>
+
+                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+                        <input type="text" class="form-control has-feedback-left" id="place" name="place" placeholder="Place">
+                        <span class="fa fa-location-arrow form-control-feedback left" aria-hidden="true"></span>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+                          <button type="submit" class="btn btn-success" name="add_sensor">Add</button>
+                        </div>
+                      </div>
+
+                  </form>
                 </div>
               </div>
             </div>
@@ -109,6 +168,13 @@
     </div>
     <script src="vendors/jquery/dist/jquery.min.js"></script> 
     <script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="build/js/custom.min.js"></script> 
+    <script src="vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="build/js/custom.min.js"></script>
+
+    <script>
+        $('#datatable-responsive').DataTable();
+    </script> 
   </body>
 </html>

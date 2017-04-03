@@ -1,24 +1,20 @@
 <?php
-	include("connect.php");
-
-	$link=Connection();
-
 	session_start();
-
-	$email_check=$_SESSION['email'];
-	$pass_check=$_SESSION['password'];
-
-	$sql = "SELECT * FROM users WHERE email = '$email_check' and password = '$pass_check'";
-
-	$result = mysqli_query($link,$sql);
-	$row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-
-	$email_session = $row['email'];
-	$pass_session = $row['password'];
-	$user_session = $row['username'];
-
-	if(!isset($email_session) && !isset($pass_session)){	
-		mysqli_close($link);
-		header('Location: login.html');	
+	$sessData = !empty($_SESSION['sessData'])?$_SESSION['sessData']:'';
+	if(!empty($sessData['status']['msg'])){
+		$statusMsg = $sessData['status']['msg'];
+		$statusMsgType = $sessData['status']['type'];
+		unset($_SESSION['sessData']['status']);
+	}
+	if(!empty($sessData['userLoggedIn']) && !empty($sessData['userID'])){
+		include 'user.php';
+		$user = new User();
+		$conditions['where'] = array(
+			'id' => $sessData['userID'],
+		);
+		$conditions['return_type'] = 'single';
+		$userData = $user->getRows($conditions);
+	}else{
+		header("Location: login.php");
 	}
 ?>

@@ -1,9 +1,9 @@
 <?php
 	include ("session.php");
-
+  include ("connect.php");
   $link=Connection();
 
-  $result=mysqli_query($link,"SELECT * FROM `templog` ORDER BY `timeStamp` DESC");
+  $result=mysqli_query($link,"SELECT * FROM templog INNER JOIN sensors ON templog.id_sensor = sensors.id ORDER BY `timeStamp` DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +37,7 @@
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
-                <h2><?php echo $user_session ?></h2>
+                <h2><?php echo $userData['username']; ?></h2>
               </div>
             </div>
             <!-- /menu profile quick info -->
@@ -70,12 +70,12 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="images/img.jpg" alt=""><?php echo $user_session?>
+                    <img src="images/img.jpg" alt=""><?php echo $userData['username'];?>
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
                     <li><a href="javascript:;">Help</a></li>
-                    <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="userAccount.php?logoutSubmit=1"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
               </ul>
@@ -101,6 +101,7 @@
                       <thead>
                         <tr>
                           <th>Timestamp</th>
+                          <th>ID Sensor</th>
                           <th>Temperature</th>
                           <th>Humidity</th>
                           <th>Moisture</th>
@@ -111,8 +112,8 @@
                       	<?php 
   							          if($result!==FALSE){
                             while($row = mysqli_fetch_array($result)) {
-                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
-                                $row["timeStamp"], $row["temperature"], $row["humidity"], $row["moisture"], $row["place"]);
+                              printf("<tr><td> &nbsp;%s </td><td> &nbsp;%s </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td><td> &nbsp;%s&nbsp; </td></tr>", 
+                                $row["timeStamp"],$row["id_sensor"], $row["temperature"], $row["humidity"], $row["moisture"], $row["place"]);
                             }
                             mysqli_free_result($result);
                             mysqli_close($link);

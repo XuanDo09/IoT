@@ -1,5 +1,6 @@
 <?php
   include ("session.php");
+  include("connect.php");
 
   $link=Connection();
 
@@ -128,7 +129,7 @@
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
-                <h2><?php echo $user_session ?></h2>
+                <h2><?php echo $userData['username']; ?></h2>
               </div>
             </div>
             <!-- /menu profile quick info -->
@@ -161,12 +162,12 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="images/img.jpg" alt=""><?php echo $user_session?>
+                    <img src="images/img.jpg" alt=""><?php echo $userData['username'];?>
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
                     <li><a href="javascript:;">Help</a></li>
-                    <li><a href="logout.php"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                    <li><a href="userAccount.php?logoutSubmit=1"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
                 </li>
               </ul>
