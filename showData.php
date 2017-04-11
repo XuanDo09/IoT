@@ -3,7 +3,19 @@
   include ("connect.php");
   $link=Connection();
 
-  $result=mysqli_query($link,"SELECT * FROM templog INNER JOIN sensors ON templog.id_sensor = sensors.id ORDER BY `timeStamp` DESC");
+  $resultID=mysqli_query($link,"SELECT * FROM `sensors` 
+    WHERE `user`='".$userData['username']."'");
+  if($resultID!==FALSE){
+    $rowId = mysqli_fetch_array($resultID);
+    if($rowId['id'] == null)
+      $id = 0;
+    else
+      $id = $rowId['id'];
+    mysqli_free_result($resultID);
+  }else
+    $id = 0;
+
+  $result=mysqli_query($link,"SELECT * FROM templog INNER JOIN sensors ON templog.id_sensor = sensors.id WHERE templog.id_sensor = ".$id." ORDER BY `timeStamp` DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
