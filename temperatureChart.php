@@ -193,12 +193,12 @@
                       if($resultMax!==FALSE){
                         $rowMax = mysqli_fetch_array($resultMax);
                         if($rowMax['max'] == null)
-                          echo 0;
+                          echo 0 . '°C';
                         else
-                          echo $rowMax['max'];
+                          echo $rowMax['max'] . '°C';
                         mysqli_free_result($resultMax);
                       }else
-                      echo 0;
+                      echo 0 . '°C';
                     ?>
                   </div>
                 </div>
@@ -209,12 +209,12 @@
                       if($resultMin!==FALSE){
                         $rowMin = mysqli_fetch_array($resultMin);
                         if($rowMin['min'] == null)
-                          echo 0;
+                          echo 0 . '°C';
                         else
-                          echo $rowMin['min'];
+                          echo $rowMin['min'] . '°C';
                         mysqli_free_result($resultMin);
                       }else
-                      echo 0;
+                      echo 0 . '°C';
                     ?>
                   </div>
                 </div>
@@ -225,12 +225,12 @@
                       if($resultAVG!==FALSE){
                         $rowAVG = mysqli_fetch_array($resultAVG);
                         if($rowAVG['avg'] == null)
-                          echo 0;
+                          echo 0 . '°C';
                         else
-                          echo $rowAVG['avg'];
+                          echo $rowAVG['avg'] . '°C';
                         mysqli_free_result($resultAVG);
                       }else
-                      echo 0;
+                      echo 0 . '°C';
                     ?>
                   </div>
                 </div>
