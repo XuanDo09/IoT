@@ -76,16 +76,28 @@
     $groupBy = "DAY";
   }
 
+  $resultID=mysqli_query($link,"SELECT * FROM `sensors` 
+    WHERE `user`='".$userData['username']."'");
+  if($resultID!==FALSE){
+    $rowId = mysqli_fetch_array($resultID);
+    if($rowId['id'] == null)
+      $id = 0;
+    else
+      $id = $rowId['id'];
+    mysqli_free_result($resultID);
+  }else
+    $id = 0;
+
   $resultMax=mysqli_query($link,"SELECT ROUND(MAX(`humidity`),1) AS `max` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
   $resultMin=mysqli_query($link,"SELECT ROUND(MIN(`humidity`),1) AS `min` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
   $resultAVG=mysqli_query($link,"SELECT ROUND(AVG(`humidity`),1) AS `avg` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
 
   $data = array();
   $result=mysqli_query($link,"SELECT (UNIX_TIMESTAMP(CONVERT_TZ(`timeStamp`, '+00:00', @@global.time_zone))*1000) AS t, ROUND(MAX(`humidity`),2) AS avg FROM templog 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."' 
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")  
     GROUP BY YEAR(`timeStamp`), ".$groupBy."(`timeStamp`)");
   if($result!=FALSE){
     while($row = mysqli_fetch_array($result)) {
@@ -194,12 +206,12 @@
                       if($resultMax!==FALSE){
                         $rowMax = mysqli_fetch_array($resultMax);
                         if($rowMax['max'] == null)
-                          echo 0;
+                          echo 0 . '%';
                         else
-                          echo $rowMax['max'];
+                          echo $rowMax['max'] . '%';
                         mysqli_free_result($resultMax);
                       }else
-                      echo 0;
+                      echo 0 . '%';
                     ?>
                   </div>
                 </div>
@@ -210,12 +222,12 @@
                       if($resultMin!==FALSE){
                         $rowMin = mysqli_fetch_array($resultMin);
                         if($rowMin['min'] == null)
-                          echo 0;
+                          echo 0 . '%';
                         else
-                          echo $rowMin['min'];
+                          echo $rowMin['min'] . '%';
                         mysqli_free_result($resultMin);
                       }else
-                      echo 0;
+                      echo 0 . '%';
                     ?>
                   </div>
                 </div>
@@ -226,12 +238,12 @@
                       if($resultAVG!==FALSE){
                         $rowAVG = mysqli_fetch_array($resultAVG);
                         if($rowAVG['avg'] == null)
-                          echo 0;
+                          echo 0 . '%';
                         else
-                          echo $rowAVG['avg'];
+                          echo $rowAVG['avg'] . '%';
                         mysqli_free_result($resultAVG);
                       }else
-                      echo 0;
+                      echo 0 . '%';
                     ?>
                   </div>
                 </div>
