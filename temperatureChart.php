@@ -75,16 +75,28 @@
     $groupBy = "DAY";
   }
 
+  $resultID=mysqli_query($link,"SELECT * FROM `sensors` 
+    WHERE `user`='".$userData['username']."'");
+  if($resultID!==FALSE){
+    $rowId = mysqli_fetch_array($resultID);
+    if($rowId['id'] == null)
+      $id = 0;
+    else
+      $id = $rowId['id'];
+    mysqli_free_result($resultID);
+  }else
+    $id = 0;
+
   $resultMax=mysqli_query($link,"SELECT ROUND(MAX(`temperature`),1) AS `max` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
   $resultMin=mysqli_query($link,"SELECT ROUND(MIN(`temperature`),1) AS `min` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
   $resultAVG=mysqli_query($link,"SELECT ROUND(AVG(`temperature`),1) AS `avg` FROM `templog` 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."'");
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")");
 
   $data = array();
   $result=mysqli_query($link,"SELECT (UNIX_TIMESTAMP(CONVERT_TZ(`timeStamp`, '+00:00', @@global.time_zone))*1000) AS t, ROUND(AVG(`temperature`),2) AS avg FROM templog 
-    WHERE DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."' 
+    WHERE (DATE(`timeStamp`) BETWEEN '".$startDate."' AND '".$endDate."') AND (`id_sensor`=".$id.")  
     GROUP BY YEAR(`timeStamp`), ".$groupBy."(`timeStamp`)");
   if($result!=FALSE){
     while($row = mysqli_fetch_array($result)) {
