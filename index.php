@@ -133,25 +133,39 @@
                       </tbody>
                     </table>
                   </div>
-                  <h2>Add sensor</h2>
-                  <form class="form-horizontal form-label-left input_mask" method="POST" action="">
-                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" id="name" name="name" placeholder="Name">
-                        <span class="fa fa-cogs form-control-feedback left" aria-hidden="true"></span>
-                      </div>
-
-                      <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-                        <input type="text" class="form-control has-feedback-left" id="place" name="place" placeholder="Place">
-                        <span class="fa fa-location-arrow form-control-feedback left" aria-hidden="true"></span>
-                      </div>
-
-                      <div class="form-group">
-                        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
-                          <button type="submit" class="btn btn-success" name="add_sensor">Add</button>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Add Sensor</button>
+                  <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Add a new sensor</h4>
                         </div>
+                        <div class="modal-body">
+                          <form class="form-horizontal form-label-left input_mask" method="POST" action="">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-3">Name: </label>
+                            <div class="col-md-9 col-sm-9 col-xs-9 form-group has-feedback">
+                              <input type="text" class="form-control has-feedback-left" id="name" name="name" placeholder="Name">
+                              <span class="fa fa-cogs form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                            
+                            <label class="control-label col-md-3 col-sm-3 col-xs-3">Place: </label>
+                            <div class="col-md-9 col-sm-9 col-xs-9 form-group has-feedback">
+                              <input type="text" class="form-control has-feedback-left" id="place" name="place" placeholder="Place">
+                              <span class="fa fa-location-arrow form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                            <div class="col-md-6 col-md-offset-9">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-success" name="add_sensor">Add</button>
+                            </div>
+                        </form>
+                        </div>
+                        <div class="modal-footer"></div>
                       </div>
-
-                  </form>
+                    </div>
+                  </div>
+                </div>
+                  
                 </div>
               </div>
             </div>
